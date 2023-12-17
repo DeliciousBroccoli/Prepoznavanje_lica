@@ -1,4 +1,6 @@
-import cv2, tkinter as tk, os
+import cv2
+import tkinter as tk
+import os
 from deepface import DeepFace
 from tkinter import filedialog
 import procesuiranje
@@ -16,16 +18,21 @@ backends = [
 ]
 
 
-backend = backends[1] #tu se podesi backend
-resized_w, resized_h = 1280, None #dimenzije resizane slike (scaled), jedna dimenzija mora biti None
+# tu se podesi backend, solidno rade 1,3,4,7,8  6 radi losije   koma su: 5,0,  brzi su:7,8
+backend = backends[1]
+# dimenzije resizane slike (scaled), jedna dimenzija mora biti None
+resized_w, resized_h = 1280, None
 
 
-file_path = "Slike\memelovetriangle.webp" #default slika
+file_path = "Slike\memelovetriangle.webp"  # default slika
+
+
 def browse_files():
     global file_path
-    file_path = filedialog.askopenfilename(initialdir=os.path.join(os.getcwd(), "Slike"), title="Select file")
+    file_path = filedialog.askopenfilename(
+        initialdir=os.path.join(os.getcwd(), "Slike"), title="Select file")
     label_path.config(text=file_path)
-    
+
 
 def video():
     global resized_w, resized_h
@@ -33,11 +40,12 @@ def video():
     cap = cv2.VideoCapture(0)
     while True:
         ret, img = cap.read()
-        orig_w, orig_h = img.shape[1], img.shape[0]  # dimenzije originalne slike
-        # solidno rade 1,3,4,7,8  6 radi losije   koma su: 5,0,  brzi su:7,8
+        # dimenzije originalne slike
+        orig_w, orig_h = img.shape[1], img.shape[0]
         analiza = DeepFace.analyze(img, actions=(
             "emotion", "age", "gender", "race"), detector_backend=backend, enforce_detection=False)
-        resize = procesuiranje.ispis(analiza, img, orig_w, orig_h, resized_w, resized_h)
+        resize = procesuiranje.ispis(
+            analiza, img, orig_w, orig_h, resized_w, resized_h)
         cv2.imshow("Slika", resize)
         k = cv2.waitKey(1) & 0xFF
         if k == ord('q'):
@@ -54,13 +62,13 @@ def slika():
     orig_w, orig_h = img.shape[1], img.shape[0]
     analiza = DeepFace.analyze(img, actions=(
         "emotion", "age", "gender", "race"), detector_backend=backend, enforce_detection=False)
-    resize = procesuiranje.ispis(analiza, img, orig_w, orig_h, resized_w, resized_h)
+    resize = procesuiranje.ispis(
+        analiza, img, orig_w, orig_h, resized_w, resized_h)
     cv2.imshow("Slika", resize)
     cv2.waitKey(0) & 0xFF == ord("q")
     cv2.destroyAllWindows()
     gumb2.config(state="normal")
-    
-    
+
 
 root = tk.Tk()
 gumb1 = tk.Button(root, text="Video", command=video, width=15, height=3)
